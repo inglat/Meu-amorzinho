@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Página de Corações</title>
+  <style>
+    :root{
+      --bg1:#ff8fc1; /* rosa */
+      --bg2:#8b63ff; /* roxo */
+      --accent:#fff8f9; /* cor para destaque dentro dos corações */
+      --heart-color: #ffd1e8; /* cor dos corações que contrasta */
+      --card-bg: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.08);
+      --text:#1a1224;
+      --radius:16px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    /* background gradient + subtle moving hearts pattern */
+    body{
+      margin:0;
+      min-height:100vh;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+      box-sizing:border-box;
+    }
+
+    .page{
+      width:100%;
+      max-width:1100px;
+      backdrop-filter: blur(6px);
+      border-radius:20px;
+      padding:28px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    h1{
+      margin:0;
+      font-size:22px;
+      color:white;
+      text-shadow:0 2px 6px rgba(0,0,0,0.25);
+    }
+    p.lead{margin:0;color:rgba(255,255,255,0.9);opacity:0.95}
+
+    /* Hearts grid */
+    .hearts-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:18px;
+      margin-bottom:22px;
+    }
+
+    .heart-card{
+      position:relative;
+      padding:18px 14px 20px 14px;
+      border-radius:12px;
+      background:var(--card-bg);
+      overflow:visible;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .heart-card:hover{transform:translateY(-6px);box-shadow:0 10px 25px rgba(0,0,0,0.2)}
+
+    .heart-svg{width:74px;height:74px;flex:0 0 74px}
+    .heart-svg svg{width:100%;height:100%;display:block}
+
+    .name-and-meta{
+      min-width:0;
+    }
+    .name{
+      font-weight:700;
+      color: #3b0d2b; /* escuro para contraste */
+      font-size:18px;
+      margin-bottom:6px;
+    }
+    .subtitle{font-size:13px;color:rgba(255,255,255,0.9)}
+
+    /* content area for text / photos / videos */
+    .content-area{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+    }
+    @media (max-width:900px){
+      .content-area{grid-template-columns: 1fr}
+    }
+
+    .editor{
+      padding:16px;
+      border-radius:12px;
+      background:var(--glass);
+      min-height:220px;
+    }
+    .editor h3{margin-top:0;color:white}
+    textarea{
+      width:100%;
+      min-height:120px;
+      border-radius:10px;
+      border:0;padding:10px;resize:vertical;
+      font-size:14px;box-sizing:border-box;
+    }
+
+    .media-panel{
+      padding:16px;border-radius:12px;background:rgba(255,255,255,0.04);
+    }
+    .media-panel h4{margin:0 0 8px 0;color:white}
+    .preview{
+      margin-top:10px;border-radius:10px;overflow:hidden;background:white;display:flex;align-items:center;justify-content:center;min-height:160px
+    }
+    .preview img{max-width:100%;height:auto;display:block}
+    .preview iframe{width:100%;height:200px;border:0}
+
+    .controls{display:flex;gap:8px;margin-top:10px}
+    .controls input[type="text"], .controls input[type="url"]{flex:1;padding:8px;border-radius:8px;border:0}
+    .btn{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,#fff,#ffe6f0);cursor:pointer}
+
+    /* modal */
+    .modal{
+      position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,0.6);z-index:60
+    }
+    .modal.open{display:grid}
+    .modal-card{background:white;border-radius:12px;padding:16px;max-width:880px;width:96%;max-height:90vh;overflow:auto}
+    .modal-card h3{margin-top:0}
+
+    /* decorative floating hearts in background (behind page) */
+    .floating-hearts{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .floating-hearts svg{position:absolute;opacity:0.12;filter:blur(0.5px)}
+
+    footer{margin-top:18px;color:rgba(255,255,255,0.85);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="floating-hearts" aria-hidden>
+    <!-- a few SVG hearts positioned for style -->
+    <svg style="left:6%;top:8%;width:160px;" viewBox="0 0 24 24"><path fill="#fff" d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z"/></svg>
+    <svg style="right:6%;bottom:12%;width:200px;" viewBox="0 0 24 24"><path fill="#fff" d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z"/></svg>
+  </div>
+
+  <main class="page" role="main">
+    <header>
+      <div>
+        <h1>Minha página de corações 💞</h1>
+        <p class="lead">Clique em um coração para abrir espaço para textos, fotos e vídeos.</p>
+      </div>
+      <div style="text-align:right;color:rgba(255,255,255,0.95)">
+        <small>Cor: rosa → roxo</small>
+      </div>
+    </header>
+
+    <section class="hearts-grid" id="heartsGrid">
+      <!-- cards gerados pelo HTML para cada nome pedido -->
+      <div class="heart-card" data-name="Minha linda">
+        <div class="heart-svg">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z" fill="var(--heart-color)"/>
+          </svg>
+        </div>
+        <div class="name-and-meta">
+          <div class="name">Minha linda</div>
+          <div class="subtitle">Clique para editar ou abrir</div>
+        </div>
+      </div>
+
+      <div class="heart-card" data-name="amorzinho">
+        <div class="heart-svg">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z" fill="#ffd9ee"/>
+          </svg>
+        </div>
+        <div class="name-and-meta">
+          <div class="name">amorzinho</div>
+          <div class="subtitle">Toque para ver</div>
+        </div>
+      </div>
+
+      <div class="heart-card" data-name="momo">
+        <div class="heart-svg">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z" fill="#fff0f6"/>
+          </svg>
+        </div>
+        <div class="name-and-meta">
+          <div class="name">momo</div>
+          <div class="subtitle">Personalize aqui</div>
+        </div>
+      </div>
+
+      <div class="heart-card" data-name="princesa">
+        <div class="heart-svg">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z" fill="#ffd7ec"/>
+          </svg>
+        </div>
+        <div class="name-and-meta">
+          <div class="name">princesa</div>
+          <div class="subtitle">Adicionar fotos ou texto</div>
+        </div>
+      </div>
+
+      <div class="heart-card" data-name="perfeita">
+        <div class="heart-svg">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z" fill="#ffd1e6"/>
+          </svg>
+        </div>
+        <div class="name-and-meta">
+          <div class="name">perfeita</div>
+          <div class="subtitle">Adicione vídeo</div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="content-area">
+      <div class="editor">
+        <h3 id="editorTitle">Selecione um coração</h3>
+        <p style="color:rgba(255,255,255,0.85)">Área de texto livre — escreva uma mensagem, memórias ou descrições. O botão "Salvar" associa esse texto ao coração selecionado (local apenas no navegador).</p>
+        <textarea id="message" placeholder="Escreva aqui..."></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn" id="saveBtn">Salvar texto</button>
+          <button class="btn" id="clearBtn">Limpar</button>
+        </div>
+      </div>
+
+      <aside class="media-panel">
+        <h4>Fotos / Vídeo</h4>
+        <div class="controls">
+          <input type="url" id="imgUrl" placeholder="Link direto da imagem (https://...)" />
+          <button class="btn" id="addImg">Adicionar</button>
+        </div>
+        <div class="controls" style="margin-top:8px">
+          <input type="url" id="videoUrl" placeholder="Link do vídeo (YouTube embutível ou URL direta)" />
+          <button class="btn" id="addVideo">Adicionar</button>
+        </div>
+
+        <div class="preview" id="previewBox">
+          <small style="color:#222">Preview</small>
+        </div>
+
+        <div style="margin-top:10px;text-align:center">
+          <small style="color:rgba(255,255,255,0.85)">As mídias ficam só no seu navegador (local). Para publicar, salve o HTML e hospede em um servidor.</small>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <small>Feito com 💗 — Clique em qualquer coração para começar.</small>
+    </footer>
+
+    <!-- modal para mostrar conteúdo salvo -->
+    <div class="modal" id="modal">
+      <div class="modal-card">
+        <button id="closeModal" style="float:right">Fechar</button>
+        <h3 id="modalName">Nome</h3>
+        <div id="modalText" style="white-space:pre-wrap;margin-top:8px"></div>
+        <div id="modalMedia" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // simples "storage" local em memória (localStorage) para manter textos/mídias por nome
+    const storageKey = 'hearts-data-v1';
+    const heartsGrid = document.getElementById('heartsGrid');
+    const editorTitle = document.getElementById('editorTitle');
+    const message = document.getElementById('message');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const imgUrl = document.getElementById('imgUrl');
+    const addImg = document.getElementById('addImg');
+    const videoUrl = document.getElementById('videoUrl');
+    const addVideo = document.getElementById('addVideo');
+    const previewBox = document.getElementById('previewBox');
+    const modal = document.getElementById('modal');
+    const modalName = document.getElementById('modalName');
+    const modalText = document.getElementById('modalText');
+    const modalMedia = document.getElementById('modalMedia');
+    const closeModal = document.getElementById('closeModal');
+
+    let data = {};
+    try{data = JSON.parse(localStorage.getItem(storageKey)) || {}}catch(e){data={}};
+    let selectedName = null;
+
+    function openFor(name){
+      selectedName = name;
+      editorTitle.textContent = name;
+      const item = data[name] || {};
+      message.value = item.text || '';
+      renderPreview(item);
+    }
+
+    function saveFor(name){
+      if(!name) return alert('Selecione um coração primeiro.');
+      data[name] = data[name] || {images:[],videos:[],text:''};
+      data[name].text = message.value;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      alert('Salvo localmente!');
+    }
+
+    function renderPreview(item){
+      previewBox.innerHTML = '';
+      if(!item) {previewBox.innerHTML = '<small>Preview</small>'; return}
+      if(item.images && item.images.length){
+        const img = document.createElement('img'); img.src = item.images[item.images.length-1]; previewBox.appendChild(img);
+      } else if(item.videos && item.videos.length){
+        const v = item.videos[item.videos.length-1];
+        // if youtube link try to embed
+        if(v.includes('youtube.com')||v.includes('youtu.be')){
+          const id = extractYouTubeID(v);
+          const iframe = document.createElement('iframe'); iframe.src = 'https://www.youtube.com/embed/'+id; previewBox.appendChild(iframe);
+        } else {
+          const p = document.createElement('p'); p.textContent = 'Vídeo: ' + v; previewBox.appendChild(p);
+        }
+      } else {
+        previewBox.innerHTML = '<small>Sem mídia</small>';
+      }
+    }
+
+    function extractYouTubeID(url){
+      try{
+        let u = new URL(url);
+        if(u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+        if(u.searchParams.has('v')) return u.searchParams.get('v');
+        return '';
+      }catch(e){return ''}
+    }
+
+    heartsGrid.querySelectorAll('.heart-card').forEach(card=>{
+      const name = card.dataset.name;
+      card.addEventListener('click', ()=>{
+        // open modal with saved content
+        const item = data[name] || {};
+        modalName.textContent = name;
+        modalText.textContent = item.text || '';
+        modalMedia.innerHTML = '';
+        if(item.images && item.images.length){
+          const img = document.createElement('img'); img.src = item.images[item.images.length-1]; img.style.maxWidth='100%'; modalMedia.appendChild(img);
+        }
+        if(item.videos && item.videos.length){
+          const v = item.videos[item.videos.length-1];
+          if(v.includes('youtube.com')||v.includes('youtu.be')){
+            const id = extractYouTubeID(v);
+            const iframe = document.createElement('iframe'); iframe.src='https://www.youtube.com/embed/'+id; iframe.width='100%'; iframe.height='420'; modalMedia.appendChild(iframe);
+          } else {
+            const link = document.createElement('a'); link.href=v; link.textContent='Abrir vídeo'; link.target='_blank'; modalMedia.appendChild(link);
+          }
+        }
+        modal.classList.add('open');
+
+        // also open editor so user can edit
+        openFor(name);
+      })
+    })
+
+    saveBtn.addEventListener('click', ()=>{ if(selectedName) saveFor(selectedName); else alert('Selecione um coração primeiro.'); });
+    clearBtn.addEventListener('click', ()=>{ message.value=''; });
+
+    addImg.addEventListener('click', ()=>{
+      const url = imgUrl.value.trim(); if(!url) return alert('Cole a URL da imagem');
+      if(!selectedName) return alert('Selecione um coração primeiro.');
+      data[selectedName] = data[selectedName] || {images:[],videos:[],text:''};
+      data[selectedName].images.push(url);
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      imgUrl.value='';
+      renderPreview(data[selectedName]);
+      alert('Imagem adicionada (local)');
+    })
+
+    addVideo.addEventListener('click', ()=>{
+      const url = videoUrl.value.trim(); if(!url) return alert('Cole o link do vídeo');
+      if(!selectedName) return alert('Selecione um coração primeiro.');
+      data[selectedName] = data[selectedName] || {images:[],videos:[],text:''};
+      data[selectedName].videos.push(url);
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      videoUrl.value='';
+      renderPreview(data[selectedName]);
+      alert('Vídeo adicionado (local)');
+    })
+
+    closeModal.addEventListener('click', ()=>{ modal.classList.remove('open'); });
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('open'); });
+
+    // ao carregar, se já houver dados, não selecione nada — user clica
+    // (opcional) abrir primeiro automaticamente
+    // openFor('Minha linda');
+  </script>
+</body>
+</html>
