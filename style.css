@@ -19,6 +19,53 @@
     heart.style.fontSize = (size/7) + 'px';
     
     document.body.appendChild(heart);
+                                .floating-heart {
+  position: absolute;
+  width: 80px;
+  height: 70px;
+  background-color: #ffd1e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b0d2b;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.8;
+  animation: rise 10s linear infinite;
+  z-index: 1;
+  
+  /* Criando o coração com CSS puro */
+  transform: rotate(-45deg);
+  border-radius: 50% 50% 0 0;
+}
+
+.floating-heart::before,
+.floating-heart::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 70px;
+  background-color: #ffd1e8;
+  border-radius: 50%;
+}
+
+.floating-heart::before {
+  top: -35px;
+  left: 0;
+}
+
+.floating-heart::after {
+  left: 35px;
+  top: 0;
+}
+
+/* Animação subindo */
+@keyframes rise {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0.6; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+}
   }
 </script>
 
