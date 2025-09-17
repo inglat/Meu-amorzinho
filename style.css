@@ -1,0 +1,94 @@
+:root {
+  --bg1:#ff8fc1;
+  --bg2:#8b63ff;
+  --heart-color:#ffd1e8;
+  --text:#3b0d2b;
+}
+
+body {
+  margin:0;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+}
+
+.page {
+  max-width:1000px;
+  width:90%;
+  backdrop-filter:blur(6px);
+  background:rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:20px;
+}
+
+.hearts-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.heart-card {
+  aspect-ratio:1/1;
+  background:var(--heart-color);
+  clip-path:path("M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z");
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:1rem;
+  color:var(--text);
+  cursor:pointer;
+  transition:transform 0.3s ease;
+}
+
+.heart-card:hover {
+  transform:scale(1.08);
+}
+
+.floating-hearts svg {
+  position:absolute;
+  fill:white;
+  opacity:0.15;
+  animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-10px) scale(1.05);}
+}
+
+.content-area {
+  display:grid;
+  grid-template-columns:1fr 300px;
+  gap:16px;
+}
+
+.editor textarea {
+  width:100%;
+  min-height:120px;
+  border-radius:8px;
+  border:0;
+  padding:10px;
+}
+
+.modal {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  place-items:center;
+}
+
+.modal.open { display:grid; }
+
+.modal-card {
+  background:white;
+  border-radius:12px;
+  padding:16px;
+  max-width:600px;
+  width:95%;
+}
