@@ -1,51 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Página de Corações</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página do Amor</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9ecb, #b06ef7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 120px;
+      background-color: #fff0f6;
+      color: #ff4d88;
+      border-radius: 50% 50% 50% 50%;
+      clip-path: polygon(50% 0%, 61% 17%, 78% 17%, 100% 40%, 50% 100%, 0% 40%, 22% 17%, 39% 17%);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+      50% { transform: translateY(-30px) rotate(3deg); opacity: 1; }
+      100% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: white;
+    }
+  </style>
 </head>
 <body>
-  <div class="floating-hearts" aria-hidden>
-    <svg class="float" style="left:10%;top:8%;width:160px;"><path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z"/></svg>
-    <svg class="float" style="right:12%;bottom:12%;width:200px;"><path d="M12 21s-7.5-4.35-10-7.03C-1.2 10.1 3.2 4 8.5 6.5 10.7 7.7 12 9.5 12 9.5s1.3-1.8 3.5-3c5.3-2.5 9.7 3.6 6.5 7.47C19.5 16.65 12 21 12 21z"/></svg>
+  <div class="content">
+    <h1>💖 Nosso cantinho 💖</h1>
+    <p>Espaço para texto, fotos e vídeos aqui</p>
   </div>
 
-  <main class="page">
-    <section class="hearts-grid">
-      <div class="heart-card" data-name="Minha linda"><span>Minha linda</span></div>
-      <div class="heart-card" data-name="amorzinho"><span>amorzinho</span></div>
-      <div class="heart-card" data-name="momo"><span>momo</span></div>
-      <div class="heart-card" data-name="princesa"><span>princesa</span></div>
-      <div class="heart-card" data-name="perfeita"><span>perfeita</span></div>
-    </section>
-
-    <section class="content-area">
-      <div class="editor">
-        <h3 id="editorTitle">Selecione um coração</h3>
-        <textarea id="message" placeholder="Escreva aqui..."></textarea>
-        <button id="saveBtn">Salvar texto</button>
-      </div>
-      <aside class="media-panel">
-        <input type="url" id="imgUrl" placeholder="Link da imagem">
-        <button id="addImg">Adicionar imagem</button>
-        <input type="url" id="videoUrl" placeholder="Link do vídeo">
-        <button id="addVideo">Adicionar vídeo</button>
-        <div id="previewBox">Preview</div>
-      </aside>
-    </section>
-  </main>
-
-  <div class="modal" id="modal">
-    <div class="modal-card">
-      <button id="closeModal">Fechar</button>
-      <h3 id="modalName">Nome</h3>
-      <div id="modalText"></div>
-      <div id="modalMedia"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+  <script>
+    const nomes = ["Minha linda", "amorzinho", "momo", "princesa", "perfeita"];
+    nomes.forEach((nome, i) => {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerText = nome;
+      heart.style.left = Math.random() * 90 + 'vw';
+      heart.style.top = Math.random() * 90 + 'vh';
+      heart.style.animationDelay = (i * 0.6) + 's';
+      document.body.appendChild(heart);
+    });
+  </script>
 </body>
 </html>
