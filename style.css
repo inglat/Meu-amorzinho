@@ -3,7 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   color: white;
   text-align: center;
-  background: linear-gradient(to top, #ff69b4 0%, #c71585 50%, #6a0dad 100%);
+  background: linear-gradient(to bottom, #ffb6c1 0%, #ff69b4 30%, #c71585 60%, #6a0dad 100%);
+  height: 100vh;
   overflow: hidden;
 }
 
