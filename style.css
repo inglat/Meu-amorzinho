@@ -13,12 +13,24 @@ body {
   font-size: 2.5em;
 }
 
-.opiniao, .galeria {
+.opiniao, .lembranca {
   margin: 40px auto;
   max-width: 600px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   padding: 20px;
   border-radius: 15px;
+  color: white;
+}
+
+.lembranca h2 {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+}
+
+.lembranca p {
+  margin-top: 10px;
+  font-size: 1em;
+  line-height: 1.5em;
 }
 
 img, video {
