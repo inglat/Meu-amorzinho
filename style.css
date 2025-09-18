@@ -4,8 +4,8 @@ body {
   color: white;
   text-align: center;
   background: linear-gradient(to bottom, #ffb6c1 0%, #ff69b4 30%, #c71585 60%, #6a0dad 100%);
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .titulo {
