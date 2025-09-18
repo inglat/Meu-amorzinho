@@ -20,3 +20,11 @@ fetch("content/opiniao.txt")
   .then(texto => {
     document.getElementById("texto-opiniao").textContent = texto;
   });
+
+// Ampliar imagem ao clicar
+function ampliarImagem(img) {
+  const clone = img.cloneNode();
+  clone.classList.add("imagem-ampliada");
+  clone.onclick = () => clone.remove();
+  document.body.appendChild(clone);
+}
