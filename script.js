@@ -20,4 +20,3 @@ fetch("content/opiniao.txt")
   .then(texto => {
     document.getElementById("texto-opiniao").textContent = texto;
   });
-
